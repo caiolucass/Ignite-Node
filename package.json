@@ -1,13 +1,13 @@
 {
   "name": "Ignite-Node",
   "version": "1.0.0",
-  "description": "",
+  "description": "Projeto Ignite-Node da ROckeatSeat",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Caio Lucas",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
