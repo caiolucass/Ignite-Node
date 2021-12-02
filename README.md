@@ -15,7 +15,7 @@
 
 - [X] Nao deve ser possivel cadastrar uma conta com um CPF ja cadastrado
 - [] Nao deve ser possivel fazer deposito em uma conta inexistente
-- [] Nao deve ser possivel buscar o extrato de uma conta inexistente
+- [X] Nao deve ser possivel buscar o extrato de uma conta inexistente
 - [] Nao deve ser possivel fazer saque uma conta inexistente
 - [] Nao deve ser possivel excluir uma conta inexistente
 - [] Nao deve ser possivel realizar saque em uma conta com o saldo insuficiente
