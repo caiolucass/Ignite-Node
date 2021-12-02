@@ -1,60 +1,50 @@
+const { request, response } = require("express");
+const {v4: uuidV4} = require("uuid");
 const express = require('express');
+
 const app = express();
 app.use(express.json());
 
-/*Get*/
-app.get("/cursos", (request, response) => {
-    const query = request.query;
-    console.log(query);
-    return response.json([
-        "Curso 1",
-        "Curso 2",
-        "Curso 3"
-    ]);
-})
+const customers = [];
 
-/*Post*/
-app.post("/cursos", (request, response) => {
-    const body = request.body;
-    console.log(body);
-    return response.json([
-        "Curso 1",
-        "Curso 2",
-        "Curso 3",
-        "Curso 4"
-    ]);
-})
+/**
+ * CPF - String
+ * name - String
+ * id - uuid
+ * statement - Array
+ */
+app.post("/account", (request, response) =>{
+    const {cpf, name} = request.body;
 
-/*Put*/
-app.put("/cursos/:id", (request, response) => {
-    const {id} = request.params;
-    console.log(id);
-    return response.json([
-        "Curso 6",
-        "Curso 2",
-        "Curso 3",
-        "Curso 4"
-    ]);
-})
+    //verifica se o cpf ja esta cadastrado
+    const customerAlreadyExists = customers.some(
+        (customers) => customers.cpf === cpf
+    );
 
-/*Patch*/
-app.patch("/cursos/:id", (request, response) => {
-    return response.json([
-        "Curso 6",
-        "Curso 7",
-        "Curso 3",
-        "Curso 4"
-    ]);
-})
+    if(customerAlreadyExists){
+        return response.status(400).json({error: "CPF do cliente ja se encontra cadastrado!"});
+    }
 
-/*Delete*/
-app.delete("/cursos/:id", (request, response) => {
-    return response.json([
-        "Curso 6",
-        "Curso 7",
-        "Curso 3",
-        "Curso 4"
-    ]);
-})
+    customers.push({
+        cpf,
+        name,
+        id:uuidV4,
+        statement:[],
+    });
+    return response.status(201).send();
+});
+
+app.get("/statement/:cpf", (request, response) =>{
+   const {cpf} = request.params;
+   
+   const custumer = customers.find((customers => customers.cpf === cpf));
+
+   if(!custumer){
+       return response.status(400).json({error: "Desculpe, cliente nao encontrado! :( "});
+   }
+
+   return response.json(customers.statement);
+});
+
 //Porta do servidor
 app.listen(3333);
