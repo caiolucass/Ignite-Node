@@ -70,13 +70,13 @@ function getBalance(statement){
         return acc - operation.amount;
     }
    }, 0) //inicia o reduce com o valor 0
+   return balance;
 }
 /**
  * Deposita em um conta
  */
 app.post("/deposit", verifyIfExistsAccountCPF, (request, response) =>{
    const {description, amount} = request.body;
-
    const {customer} = request;
 
    const statementOperation = {
@@ -95,7 +95,7 @@ app.post("/deposit", verifyIfExistsAccountCPF, (request, response) =>{
  * Saque em uma conta
  */
  app.post("/withdraw", verifyIfExistsAccountCPF, (request, response) =>{
-    const {description, amount} = request.body;
+    const {amount} = request.body;
     const {customer} = request;
     const balance = getBalance(customer.statement);
 
