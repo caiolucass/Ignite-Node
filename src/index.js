@@ -38,7 +38,7 @@ app.post("/account", (request, response) =>{
     );
 
     if(customerAlreadyExists){
-        return response.status(400).json({error: "CPF do cliente ja se encontra cadastrado!"});
+        return response.status(400).json({error: "Desculpe. O CPF do cliente ja se encontra cadastrado!"});
     }
 
     customers.push({
@@ -52,7 +52,7 @@ app.post("/account", (request, response) =>{
 });
 
 /**
- * Verifica se a conta com o CPF ja existe
+ * Verifica se a conta com o CPF ja existem
  */
 app.get("/statement", verifyIfExistsAccountCPF, (request, response) =>{
     const{customer} = request;
@@ -64,32 +64,31 @@ app.get("/statement", verifyIfExistsAccountCPF, (request, response) =>{
  */
 function getBalance(statement){
    const balance = statement.reduce((acc, operation) =>{
-    if(operation.type === 'credit'){
+    if(operation.type === 'Credit'){
         return acc + operation.amount;
     }else{
         return acc - operation.amount;
     }
-   }, 0) //inicia o reduce com o valor 0
+   }, 0); //inicia o reduce com o valor 0
    return balance;
 }
 /**
  * Deposita em um conta
  */
 app.post("/deposit", verifyIfExistsAccountCPF, (request, response) =>{
-   const {description, amount} = request.body;
+   const {amount} = request.body;
    const {customer} = request;
 
    const statementOperation = {
-       description,
-       amount,
+       description: "Deposito realizado pelo (a) cliente de cpf: " + `${customer.cpf}` + " e nome: " + `${customer.name}`,
+       amount: "R$: " + amount,
        created_at: new Date(),
-       type: "credit",
+       type: "Credit",
    };
 
    customer.statement.push(statementOperation);
    return response.status(201).json({sucess: "Sucesso, seu deposito foi realizado com sucesso! :) "});
 });
-
 
 /**
  * Saque em uma conta
@@ -105,14 +104,69 @@ app.post("/deposit", verifyIfExistsAccountCPF, (request, response) =>{
     }
  
     const statementOperation = {
-        amount,
+        description: "Saque realizado pelo (a) cliente de cpf: " + `${customer.cpf}` + " e nome: " + `${customer.name}`,
+        amount: "R$: " + amount,
         created_at: new Date(),
-        type: "debit",
+        type: "Debit",
     };
+    
     customer.statement.push(statementOperation);
     return response.status(201).json({sucess: "Sucesso, seu saque foi realizado com sucesso! :) "});
  });
 
+ /**
+ * Obtem extrato pela data
+ */
+ app.get("/statement/date", verifyIfExistsAccountCPF, (request, response) =>{
+    const{customer} = request;
+    const{date} = request.query;
+
+    //poder pegar o extrato independente da hora
+    const dateFormat = new Date(date + " 00:00");
+
+    //converter a data pra string
+    const statement = customer.statement.filter((statement) => statement.created_at.toDateString() === new Date(dateFormat).toDateString());
+    return response.json(statement);
+});
+
+/**
+ * Atualiza as informacoes de uma conta
+ */
+ app.put("/account", verifyIfExistsAccountCPF, (request, response) =>{
+    const {name} = request.body;
+    const {customer} = request;
+
+    customer.name = name;
+    return response.status(201).json({sucess: "Sucesso, conta atualizada com sucesso! :) "});  
+});
+
+/*
+* Obtem uma conta
+**/
+app.get("/account", verifyIfExistsAccountCPF, (request, response) =>{
+    const {customer} = request;
+    return response.json(customer);    
+});
+
+/*
+* Deleta uma uma conta
+**/
+app.delete("/account", verifyIfExistsAccountCPF, (request, response) =>{
+    const {customer} = request;
+
+    customers.splice(customer, 1);
+    return response.status(200).json({sucess: "Conta excluida com sucesso! ", customer});
+});
+
+/*
+* Deleta uma uma conta
+**/
+app.get("/balance", verifyIfExistsAccountCPF, (request, response) =>{
+    const {customer} = request;
+    const balance = getBalance(customer.statement);
+
+    return response.json(balance);
+});
 
 //Porta do servidor
 app.listen(3333);
