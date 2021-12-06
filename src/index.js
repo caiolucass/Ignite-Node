@@ -8,6 +8,22 @@ app.use(express.json());
 const customers = [];
 
 /**
+ * Middleware Verifica se a conta com o CPF ja existe
+ */
+function verifyIfExistsAccountCPF(request, response, next){
+    const {cpf} = request.headers;
+   
+    const customer = customers.find((customer => customer.cpf === cpf));
+
+    if(!customer){
+        return response.status(400).json({error: "Desculpe, cliente nao encontrado! :( "});
+    }
+    request.customer = customer;
+    return next();
+}
+
+/**
+ * Criar uma conta
  * CPF - String
  * name - String
  * id - uuid
@@ -28,23 +44,75 @@ app.post("/account", (request, response) =>{
     customers.push({
         cpf,
         name,
-        id:uuidV4,
+        id:uuidV4(),
         statement:[],
     });
-    return response.status(201).send();
+    return response.status(201).json({sucess: "Sucesso, conta cadastrada com sucesso! :) "});
+    
 });
 
-app.get("/statement/:cpf", (request, response) =>{
-   const {cpf} = request.params;
-   
-   const custumer = customers.find((customers => customers.cpf === cpf));
-
-   if(!custumer){
-       return response.status(400).json({error: "Desculpe, cliente nao encontrado! :( "});
-   }
-
-   return response.json(customers.statement);
+/**
+ * Verifica se a conta com o CPF ja existe
+ */
+app.get("/statement", verifyIfExistsAccountCPF, (request, response) =>{
+    const{customer} = request;
+    return response.json(customer.statement);
 });
+
+/**
+ * Verifica se existe saldo na conta e o tipo de oeracao realizada
+ */
+function getBalance(statement){
+   const balance = statement.reduce((acc, operation) =>{
+    if(operation.type === 'credit'){
+        return acc + operation.amount;
+    }else{
+        return acc - operation.amount;
+    }
+   }, 0) //inicia o reduce com o valor 0
+}
+/**
+ * Deposita em um conta
+ */
+app.post("/deposit", verifyIfExistsAccountCPF, (request, response) =>{
+   const {description, amount} = request.body;
+
+   const {customer} = request;
+
+   const statementOperation = {
+       description,
+       amount,
+       created_at: new Date(),
+       type: "credit",
+   };
+
+   customer.statement.push(statementOperation);
+   return response.status(201).json({sucess: "Sucesso, seu deposito foi realizado com sucesso! :) "});
+});
+
+
+/**
+ * Saque em uma conta
+ */
+ app.post("/withdraw", verifyIfExistsAccountCPF, (request, response) =>{
+    const {description, amount} = request.body;
+    const {customer} = request;
+    const balance = getBalance(customer.statement);
+
+    // se o valor da operacao for menor que o saldo da conta
+    if(balance < amount){
+      return response.status(400).json({errror: "Operacao nao realizada, saldo insuficiente em sua conta :( ! "});
+    }
+ 
+    const statementOperation = {
+        amount,
+        created_at: new Date(),
+        type: "debit",
+    };
+    customer.statement.push(statementOperation);
+    return response.status(201).json({sucess: "Sucesso, seu saque foi realizado com sucesso! :) "});
+ });
+
 
 //Porta do servidor
 app.listen(3333);
