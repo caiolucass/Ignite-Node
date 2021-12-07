@@ -74,7 +74,7 @@ app.get('/todos'), checkExistsUserAccount,(request, response) => {
 }
 
 /*
-** Atualizar as tarefas
+** Atualiza as tarefas
 */
 app.put('/todos'), checkExistsUserAccount,(request, response) =>{
   const {username} = request.body;
@@ -85,7 +85,7 @@ app.put('/todos'), checkExistsUserAccount,(request, response) =>{
 }
 
 /*
-** Atualizar as tarefa pelo id
+** Atualiza a tarefa pelo id
 */
 app.put("/todos/:id", checkExistsUserAccount,(request, response) =>{
   const {title, deadline} = request.body;
@@ -106,7 +106,7 @@ app.put("/todos/:id", checkExistsUserAccount,(request, response) =>{
 });
 
 /*
-** Atualizar uma tarefa como feita
+** Atualiza uma tarefa como feita
 */
 app.patch('/todos/:id/done', checkExistsUserAccount,(request, response) =>{
   const {user} = request;
@@ -123,7 +123,7 @@ app.patch('/todos/:id/done', checkExistsUserAccount,(request, response) =>{
 });
 
 /*
-** Excluir uma tarefa
+** Exclui uma tarefa
 */
 app.delete('/todos/:id', checkExistsUserAccount,(request, response) =>{
   const {user} = request;
@@ -136,7 +136,7 @@ app.delete('/todos/:id', checkExistsUserAccount,(request, response) =>{
   }
    
   user.todos.splice(todoIndex, 1);
-  return response.status(204).json();
+  return response.status(204).json({erro: "Sucesso, todo excluido com exito!"});
 });
 
 //Porta do servidor
