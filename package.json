@@ -4,13 +4,14 @@
   "description": "Projeto Ignite-Node da ROckeatSeat",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js"
+    "test": "node src/desafio1.js",
+    "dev": "nodemon src/index.js  nodemon src/desafio1.js"
   },
   "keywords": [],
   "author": "Caio Lucas",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "uuid": "^8.3.2"
   },

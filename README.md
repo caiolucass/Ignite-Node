@@ -20,3 +20,14 @@
 - [X] Nao deve ser possivel fazer saque uma conta inexistente
 - [X] Nao deve ser possivel realizar saque em uma conta com o saldo insuficiente
 - [X] Nao deve ser possivel excluir uma conta inexistente
+
+## Desafio 1
+## Requisitos
+
+- [] Deve ser possivel criar um usuario
+- [] Deve ser possivel listar todas as tarefas do usuario
+- [] Deve ser possivel atualizar uma tarefa
+- [] Deve ser possivel marcar uma tarefa como feita
+- [] Deve ser possivel excluir uma tarea
+## Regras de negocio
+

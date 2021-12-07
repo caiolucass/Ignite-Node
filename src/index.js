@@ -42,17 +42,16 @@ app.post("/account", (request, response) =>{
     }
 
     customers.push({
+        id:uuidV4(),
         cpf,
         name,
-        id:uuidV4(),
         statement:[],
     });
-    return response.status(201).json({sucess: "Sucesso, conta cadastrada com sucesso! :) "});
-    
+    return response.status(201).json({sucess: "Sucesso, conta cadastrada com sucesso! :) "});    
 });
 
 /**
- * Verifica se a conta com o CPF ja existem
+ * Verifica o extrato
  */
 app.get("/statement", verifyIfExistsAccountCPF, (request, response) =>{
     const{customer} = request;
