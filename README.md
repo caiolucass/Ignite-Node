@@ -24,10 +24,15 @@
 ## Desafio 1
 ## Requisitos
 
-- [] Deve ser possivel criar um usuario
-- [] Deve ser possivel listar todas as tarefas do usuario
+- [X] Deve ser possivel criar um usuario
+- [X] Deve ser possivel listar todas as tarefas do usuario
 - [] Deve ser possivel atualizar uma tarefa
 - [] Deve ser possivel marcar uma tarefa como feita
 - [] Deve ser possivel excluir uma tarea
 ## Regras de negocio
+
+- [X] Nao deve pode possivel criar um novo usuario quando o username ja existe
+- []  Nao deve pode possivel atualizar um lista de tarefas inexistente
+- []  Nao deve ser possivel marcar uma lista nao existente como feita
+
 
