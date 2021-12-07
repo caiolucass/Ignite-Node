@@ -22,14 +22,14 @@
 - [X] Nao deve ser possivel excluir uma conta inexistente
 
 ## Desafio 1
-## Requisitos
+### Requisitos
 
 - [X] Deve ser possivel criar um usuario
 - [X] Deve ser possivel listar todas as tarefas do usuario
 - [X] Deve ser possivel atualizar uma tarefa
 - [X] Deve ser possivel marcar uma tarefa como feita
 - [X] Deve ser possivel excluir uma tarea
-## Regras de negocio
+### Regras de negocio
 
 - [X] Nao deve pode possivel criar um novo usuario quando o username ja existe
 - [X]  Nao deve pode possivel atualizar um lista de tarefas inexistente
