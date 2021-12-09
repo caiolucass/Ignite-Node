@@ -55,20 +55,20 @@ function findUserById(request, response, next){
   }
 
   /*
-** Verfica se existe a conta do usuario
+** Verfica se existe a tarea vinculada ao usuario do usuario
 */
 function checkTodoExists(request, response, next){
     const {username} = request.headers;
     const {id} = request.params;
  
    const user = users.find(user => user.username === username);
-   todo = todos.find(todo => todo.id === id)
+   const todo = todos.find(todo => todo.id === id);
  
-    if(!todo != user.todos.id){
-        return response.status(400).json({error: 'Desculpe, essa tarefa nao percetence a esse usuario.'})
+    if(todo != user.todos.id && todo){
+        return response.status(400).json({error: 'Desculpe, essa tarefa nao percetence a esse usuario.'});
     }
  
-    const todo = {
+    todo = {
      id: uuidV4(),
      title: 'Teste',
      deadline: new Date(),
@@ -238,7 +238,7 @@ app.get("/balance", verifyIfExistsAccountCPF, (request, response) =>{
 ** Cria um novo usuario
 */
 const users = [];
-app.post("/users", (request, response) => {
+app.post("/users",  (request, response) => {
     const {name, username} = request.body;
     
     //verifica se existe um cliente
@@ -279,7 +279,7 @@ app.post('/todos' , (request, response) =>{
   /*
   ** Obtem a lista de tarefa
   */
-  app.get('/todos'), checkExistsUserAccount,(request, response) => {
+  app.get('/todos'), checkExistsUserAccount, checkTodoExists, (request, response) => {
     user = request;
     return response.json(user.todos);
   }
@@ -335,7 +335,7 @@ app.post('/todos' , (request, response) =>{
   /*
   ** Exclui uma tarefa
   */
-  app.delete('/todos/:id', checkExistsUserAccount,(request, response) =>{
+  app.delete('/todos/:id', checkExistsUserAccount, findUserById,(request, response) =>{
     user = request;
     const {id} = request.params;
   

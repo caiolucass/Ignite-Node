@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node src/index.js src/tests/todos.spec.js",
-    "dev": "nodemon src/tests/todos.spec.js"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "Caio Lucas",
