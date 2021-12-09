@@ -89,6 +89,21 @@ function checkTodoExists(request, response, next){
  }
 
 /**
+ * Middleware Verifica se a conta com o CPF ja existe
+ */
+ function verifyIfExistsRepository(request, response, next){
+  const {title} = request.headers;
+ 
+  const repository = repositories.find((respository => respository.title === title));
+
+  if(!repository){
+      return response.status(400).json({error: "Desculpe, respositorio nao encontrado! :( "});
+  }
+  request.repository = repository;
+  return next();
+}
+
+/**
  * Criar uma conta
  * CPF - String
  * name - String
@@ -121,7 +136,7 @@ app.post("/account", (request, response) =>{
  * Verifica o extrato
  */
 app.get("/statement", verifyIfExistsAccountCPF, (request, response) =>{
-    const{customer} = request;
+    const {customer} = request;
     return response.json(customer.statement);
 });
 
@@ -254,7 +269,7 @@ app.post("/users",  (request, response) => {
           username,
           todo:[],
       }); 
-      return response.status(201).json({sucess:"Parabens," + `${username}` + "cadastrado com sucesso!"});
+      return response.status(201).json({sucess:"Parabens, " + `${username}` + " cadastrado com sucesso!"});
 });
 
 /*
@@ -262,7 +277,7 @@ app.post("/users",  (request, response) => {
 */
 app.post('/todos' , (request, response) =>{
     const {title, deadline} = request.body;
-    user = request;
+    const user = request;
   
     const todoList = {
          id: uuidV4(),
@@ -280,7 +295,7 @@ app.post('/todos' , (request, response) =>{
   ** Obtem a lista de tarefa
   */
   app.get('/todos'), checkExistsUserAccount, checkTodoExists, (request, response) => {
-    user = request;
+    const user = request;
     return response.json(user.todos);
   }
   
@@ -289,7 +304,7 @@ app.post('/todos' , (request, response) =>{
   */
   app.put('/todos', checkExistsUserAccount,(request, response) =>{
     const {username} = request.body;
-    user = request;
+    const user = request;
   
     user.username = username;
     return response.status(201).json({sucess: "Sucesso, as tarefas atualizado com sucesso!"});
@@ -299,7 +314,7 @@ app.post('/todos' , (request, response) =>{
   */
   app.put("/todos/:id", checkExistsUserAccount,(request, response) =>{
     const {title, deadline} = request.body;
-    user = request;
+    const user = request;
     const {id} = request.params;
   
     const todo = user.todos.find(todo => todo.id === id);
@@ -319,7 +334,7 @@ app.post('/todos' , (request, response) =>{
   ** Atualiza uma tarefa como feita
   */
   app.patch('/todos/:id/done', checkExistsUserAccount,(request, response) =>{
-    user = request;
+    const  user = request;
     const {id} = request.params;
   
     const todo = user.todos.find(todo => todo.id === id);
@@ -336,7 +351,7 @@ app.post('/todos' , (request, response) =>{
   ** Exclui uma tarefa
   */
   app.delete('/todos/:id', checkExistsUserAccount, findUserById,(request, response) =>{
-    user = request;
+    const user = request;
     const {id} = request.params;
   
     const todoIndex = user.todos.findIndex(todo => todo.id === id);
@@ -348,5 +363,91 @@ app.post('/todos' , (request, response) =>{
     user.todos.splice(todoIndex, 1);
     return response.status(204).json({erro: "Sucesso, todo excluido com exito!"});
   });
+
+/**
+ * Cria um novo repositorio
+ */
+ const repositories = [];
+app.post("/repositories", (request, response) =>{
+const {title, url, techs} = request.body;
+
+const repositoriesAlreadyExists = repositories.find(repository => repository.title === title);
+
+if(repositoriesAlreadyExists){
+    return response.status(400).json({error: "Desculpe, o repositorio ja se encontra cadastrado no sistema. "});
+}
+
+repositories.push({
+    id: uuidV4(),
+    title,
+    url,
+    techs,
+    likes: 0,
+});
+
+return response.status(201).json({error: "Sucesso, o repositorio " + `${title}` + " foi cadastrado com exito"});
+});
+
+/**
+ * Obtem um novo repositorio
+ */
+ app.get("/repositories", verifyIfExistsRepository, (request, response) =>{
+    const {repository} = request;
+    return response.json(repository);
+});
+
+/**
+ * Atualiza um novo repositorio
+ */
+app.put("/repositories/:id", verifyIfExistsRepository, (request, response) =>{
+    const {title, url, techs} = request.body;
+    const {id} = request.params;
+    const{repository} = request;
+
+    const repo = repository.techs.find(repo => repo.id === id);
+  
+    if(!repo){
+      return response.status(404).json({erro: "Desculpe, esse repositorio nao existe! "});
+    }
+
+    repository.title = title;
+    repository.url = url;
+    repository.techs = techs;
+  
+    repository.push(repositories);
+    return response.status(201).json({sucess: "Sucesso, respositorio" + `${repo.title}` + "atualizado com exito!"});
+});
+
+/**
+ * Deleta um novo repositorio
+ */
+ app.delete("/repositories/:id", verifyIfExistsRepository, (request, response) =>{
+    const {id} = request.params;
+    const{repository} = request;
+
+    const repoIndex = repository.techs.find(repoIndex => repoIndex.id === id);
+  
+    if(repoIndex === -1){
+      return response.status(404).json({erro: "Desculpe, esse repositorio nao existe! "});
+    }
+
+    repositories.splice(repoIndex, 1);
+    return response.status(201).json({sucess: "Sucesso, respositorio" + `${repoIndex.title}` + "excluido com exito!"});
+});
+
+
+app.post("/repositories/:id/like", (request, response) =>{
+  const {id} = request.params;
+
+  const repoIndex = repository.techs.find(repoIndex => repoIndex.id === id);
+
+  if(repoIndex === -1){
+    return response.status(404).json({erro: "Desculpe, esse repositorio nao existe! "});
+  }
+  repositories[repoIndex].likes++;
+  const repository = repositories[repoIndex];
+  return response.json(repository);
+});
+
 //Porta do servidor
 app.listen(3333);

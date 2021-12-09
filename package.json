@@ -4,7 +4,7 @@
   "description": "Projeto Ignite-Node da ROckeatSeat",
   "main": "index.js",
   "scripts": {
-    "test": "node src/index.js src/tests/todos.spec.js",
+    "test": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
   "keywords": [],
