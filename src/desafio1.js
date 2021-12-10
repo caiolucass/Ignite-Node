@@ -156,7 +156,7 @@ app.post('/todos' , (request, response) =>{
   /*
   ** Exclui uma tarefa
   */
-  app.delete('/todos/:id', checkExistsUserAccount, findUserById,(request, response) =>{
+  app.delete('/todos/:id', checkExistsUserAccount,(request, response) =>{
     const user = request;
     const {id} = request.params;
   
