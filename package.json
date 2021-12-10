@@ -4,8 +4,8 @@
   "description": "Projeto Ignite-Node da ROckeatSeat",
   "main": "index.js",
   "scripts": {
-    "test": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "test": "node src/index.js src/index.js src/desafio1.js src/desafio2.js src/desafio3.js",
+    "dev": "nodemon src/index.js src/desafio1.js src/desafio2.js src/desafio3.js"
   },
   "keywords": [],
   "author": "Caio Lucas",
